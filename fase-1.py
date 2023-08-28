@@ -6,9 +6,10 @@
 # Título: Jogos Eletrônicos
 # Aluno: Huberto Gastal Mayer
 
-from modules.ParseSteamData import ParseSteamData
+from modules.VisualisationSteamData import VisualisationSteamData
 
-steam = ParseSteamData('data/steam_games.csv')
+# Instancia um objeto da classe VisualisationSteamData
+Steam = VisualisationSteamData('data/steam_games.csv')
 
 # Início do loop para interação com o usuário
 mostrarMenu = True
@@ -34,21 +35,15 @@ while True :
 
     # Mostra o percentual de jogos gratuítos
     if opt == '1' :
-        print("Percentual de jogos gratuítos: ", steam.getPercJogosGratuitos(), "%")
+        Steam.showPercJogosGratuitos()
         continue
-    # Mostra média e moda do mês de agosto da última década
+    # Mostra o ano com mais lançamentos de jogos
     elif opt == '2' :
-        print(steam.numGratuidos)
+        Steam.showAnoMaisLancamentos()
         continue
-    # Mostra a década mais chuvosa
+    # Mostra a compatibilidade com os Sistemas Operacionais
     elif opt == '3' :
-        print(steam.compatibilidade)
-        continue
-    elif opt == '4' :
-        print(steam.dateDic)
-        continue
-    elif opt == '5' :
-        print(steam)
+        Steam.showPercJogosSo()
         continue
     # Mostra o menu de opções novamente
     elif opt == 'm' :
