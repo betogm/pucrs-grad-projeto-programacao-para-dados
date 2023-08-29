@@ -73,9 +73,3 @@ class ParseSteamData:
                 anoMaisLanc[1] = num
         return anoMaisLanc
 
-
-    def __str__(self) :
-        return "numLines: " + str(self.numLines) + "\n" + \
-            "numGratuidos: " + str(self.numGratuidos)# + "\n" + \
-            # "dateDic: " + str(self.dateDic) + "\n" + \
-            # "compatibilidade: ", str(self.compatibilidade)

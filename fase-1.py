@@ -3,7 +3,7 @@
 # Disciplina: Programação para Dados
 # Professores:  Marco Aurélio Souza Mangan
 # Projeto - Fase 1
-# Título: Jogos Eletrônicos
+# Título: Jogos Eletrônicos - Fun Corp
 # Aluno: Huberto Gastal Mayer
 
 from modules.VisualisationSteamData import VisualisationSteamData
