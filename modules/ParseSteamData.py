@@ -8,40 +8,59 @@ class ParseSteamData:
         self.dateDic = {}
         self.compatibilidade = {'Windows': 0, 'Mac': 0, 'Linux': 0}
 
+        # Carrega o arquivo de dados
         with open(csvPath) as csvfile:
             reader = csv.DictReader(csvfile)
+            
+            # Itera sobre todas as linhas do arquivo,
+            # consumindo de uma vez as informações necessárias
+            # evitando mais de um loop
             for row in reader:
                 # Soma uma nova linha em cada iteração
                 self.numLines += 1
 
                 # Soma jogos gratuítos
-                if float(row['Price']) == 0.0:
-                    self.numGratuidos += 1
+                self._incrementaJogosGratuitos(row['Price'])
 
                 # Registra ano de lançamento concatenando um valor
-                if "," in row['Release date'] :
-                    parseDate = row['Release date'].split(',')
-                elif " " in row['Release date'] :
-                    parseDate = row['Release date'].split(' ')
-
-                if len(parseDate) == 2 :
-                    releaseDate = parseDate[1].strip()
-                else: 
-                    releaseDate = "undefined"
-                    self.dateDic['error'] = row['Release date']
-
-                if releaseDate not in self.dateDic:
-                    self.dateDic[releaseDate] = 1
-                else:
-                    self.dateDic[releaseDate] += 1
+                self._incrementaPorAnoLancamento(row['Release date'])
 
                 # Compatibilidade com Sistemas Operacionais
-                if row['Windows'] == "True":
-                    self.compatibilidade['Windows'] += 1
-                if row['Mac'] == "True":
-                    self.compatibilidade['Mac'] += 1
-                if row['Linux'] == "True":
-                    self.compatibilidade['Linux'] += 1
+                self._incrementaPorSistemaOperacional(row['Windows'], row['Mac'], row['Linux'])
+
+    def _incrementaJogosGratuitos(self, price):
+        """Incrementa um jogo gratuíto"""
+        if float(price) == 0.0:
+            self.numGratuidos += 1
+
+    def _incrementaPorAnoLancamento(self, releaseDate):
+        """Registra ano de lançamento concatenando um valor. 
+        Faz um parser no campo 'Release date'"""
+        if "," in releaseDate :
+            parseDate = releaseDate.split(',')
+        elif " " in releaseDate :
+            parseDate = releaseDate.split(' ')
+
+        if len(parseDate) == 2 :
+            year = parseDate[1].strip()
+        else: 
+            year = "undefined"
+            self.dateDic['error'] = releaseDate
+
+        if year not in self.dateDic:
+            self.dateDic[year] = 1
+        else:
+            self.dateDic[year] += 1
+
+    def _incrementaPorSistemaOperacional(self, windows, mac, linux):
+        """Incrementa a Compatibilidade com Sistemas Operacionais"""
+        if windows == "True":
+            self.compatibilidade['Windows'] += 1
+        if mac == "True":
+            self.compatibilidade['Mac'] += 1
+        if linux == "True":
+            self.compatibilidade['Linux'] += 1
+
 
     def _getPercentagemSobreTotal(self, valor):
         """Calcula a porcentagem de um valor em relação ao total de registros"""
