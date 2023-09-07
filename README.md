@@ -6,7 +6,7 @@
 
 1. Para executar o programa, entre no diretório raiz do programa e na shell execute o arquivo fase-1.py com o comando:
 ```bash
-# python fase-1.py
+python fase-1.py
 ```
 2. Ao ser executado, o programa apresenta um menu interativo autoexplicativo em que convida o usuário a digitar a opção da pergunta desejada.
 ```bash
@@ -21,3 +21,18 @@ Escolha a opção digitando o número ou letra para escolher o tipo de Informaç
 Qual a sua opção? ('m' para mostrar o menu) 
 ```
 3. Digite o número da pergunta desejada para obter a resposta. Digite "m" mara mostrar o menu novamente ou "s" para sair do programa.
+
+### Testes
+
+Os testes foram feitos utilizando Doctest, e consomem dados dos 20 registros do arquivo data/excerto.csv.
+Para executar os testes nos dois módulos, execute os comandos:
+
+1. Testar todos os métodos da classe *ParseSteamData*:
+```bash
+python modules/ParseSteamData.py -v
+```
+
+2. Testar todos os métodos da classe *VisualisationSteamData*:
+```bash
+python modules/VisualisationSteamData.py -v
+```
