@@ -1,12 +1,22 @@
 import csv
+from datetime import datetime
 
 class ParseSteamData:
 
     def __init__(self, csvPath="data/excerto.csv"):
         self.numLines = 0
+        self.isRpg = False
         self.numGratuidos = 0
         self.dateDic = {}
+        self.rpg = {
+            'numLines': 0,
+            'dlc': {'sum': 0, 'max': 0},
+            'avaliations': {'positivas': 0, 'negativas': 0},
+            'materiaisDemonstrativos': 0
+        }
         self.compatibilidade = {'Windows': 0, 'Mac': 0, 'Linux': 0}
+        self.metacriticScore = {}
+        self.metacriticScoreData = {}
 
         # Carrega o arquivo de dados
         with open(csvPath) as csvfile:
@@ -27,6 +37,21 @@ class ParseSteamData:
 
                 # Compatibilidade com Sistemas Operacionais
                 self._incrementaPorSistemaOperacional(row['Windows'], row['Mac'], row['Linux'])
+
+                # Verifica se é um jogo RPG
+                self._isRpg(row['Genres'])
+
+                # DLC
+                self._incrementaDlc(row['DLC count'])
+
+                # Avaliações positivas e negativas
+                self._incrementaAvaliacoes(row['Positive'], row['Negative'])
+
+                # Materiais Demonstrativos - imagens e videos
+                self._incrementaMatDemo(row['Screenshots'], row['Movies'])
+
+                # Registra Metacritc Score
+                self._incrementaMetacriticScore(row['Name'], row['Release date'], row['Metacritic score'])
 
     def _incrementaJogosGratuitos(self, price):
         """
@@ -91,8 +116,105 @@ class ParseSteamData:
         
         return self.compatibilidade
 
+    def _isRpg(self, genres):
+        if "RPG" in genres:
+            self.rpg['numLines'] += 1
+            self.isRpg = True
+            return True
+        self.isRpg = False
+        return False
+    
+    def _incrementaDlc(self, unit):
+        """
+            Calcula a porcentagem de um valor em relação ao total de registros
 
-    def _getPercentagemSobreTotal(self, valor):
+            >>> p._incrementaDlc(1)
+            {}
+        """
+        if self.isRpg:
+            self.rpg['dlc']['sum'] += int(unit)
+            if int(unit) > self.rpg['dlc']['max'] :
+                self.rpg['dlc']['max'] = int(unit)
+            return self.rpg['dlc']
+        return {}
+
+    def _incrementaAvaliacoes(self, positivas, negativas):
+        """
+            Calcula a porcentagem de um valor em relação ao total de registros
+
+            >>> p._incrementaAvaliacoes(1, 2)
+            {}
+        """
+        if self.isRpg:
+            self.rpg['avaliations']['positivas'] += int(positivas)
+            self.rpg['avaliations']['negativas'] += int(negativas)
+            return self.rpg['avaliations']
+        return {}
+
+    def _incrementaMatDemo(self, screenshots, movies):
+        """
+            Calcula a porcentagem de um valor em relação ao total de registros
+
+            >>> p._incrementaMatDemo("asdf,fdsa", "qwer,rewq,zxcv")
+            30
+        """
+        if self.isRpg:
+            self.rpg['materiaisDemonstrativos'] += len(screenshots.split(","))
+            self.rpg['materiaisDemonstrativos'] += len(movies.split(","))
+            return self.rpg['materiaisDemonstrativos']
+        return {}
+
+    def _incrementaMetacriticScore(self, jogo, dataLancamento, metacriticScore):
+        """
+            Calcula a porcentagem de um valor em relação ao total de registros
+
+            >>> p._incrementaMetacriticScore("Zelda", "Sep 25, 2022", "50")
+            {}
+
+            >>> p._incrementaMetacriticScore("Zelda", "Sep 2022", "50")
+            {}
+
+            >>> p._incrementaMetacriticScore("Zelda", "Sep", "50")
+            Sep
+            False
+        """
+        try:
+            numWords = len(dataLancamento.split())
+            if(numWords == 3):
+                dataFormatada = datetime.strptime(dataLancamento, "%b %d, %Y").strftime("%Y-%m-%d")
+            else:
+                dataFormatada = datetime.strptime(dataLancamento, "%b %Y").strftime("%Y-%m-01")
+        
+            dados = {
+                'releaseDate': dataFormatada,
+                'jogo': jogo,
+                'score': metacriticScore
+            }
+            if metacriticScore not in self.metacriticScoreData :
+                self.metacriticScoreData[metacriticScore] = {dataFormatada: dados}
+            else :
+                self.metacriticScoreData[metacriticScore][dataFormatada] = dados
+            return dados
+        except ValueError:
+            print(dataLancamento)
+            return False
+
+
+    def _computaMetacriticScore(self):
+        """
+            Calcula a porcentagem de um valor em relação ao total de registros
+
+            >>> p._computaMetacriticScore()
+            {}
+        """
+        self.metacriticScore = {}
+        for n in sorted(self.metacriticScoreData, reverse=True)[:10] :
+            for i in sorted(self.metacriticScoreData[n]) :
+                self.metacriticScore[n + "_" + i] = self.metacriticScoreData[n][i]
+        return self.metacriticScore
+
+
+    def _getPercentagemSobreTotal(self, valor, numLines = 0):
         """
             Calcula a porcentagem de um valor em relação ao total de registros
 
@@ -102,7 +224,12 @@ class ParseSteamData:
             >>> p._getPercentagemSobreTotal(50.0)
             250.0
         """
-        return (100 * valor) / self.numLines;
+        if numLines == 0:
+            numLines = self.numLines
+        return (100 * valor) / numLines;
+
+    def getDlc(self):
+        pass
 
     def getPercJogosGratuitos(self):
         """
