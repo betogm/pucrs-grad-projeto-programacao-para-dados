@@ -1,9 +1,18 @@
 import csv
 from datetime import datetime
+import pandas as pd
 
 class ParseSteamData:
 
     def __init__(self, csvPath="data/excerto.csv"):
+        self.df = pd.read_csv(csvPath)
+
+        self.df = self.df.astype({
+            'Price':'float',
+            'Positive':'int',
+            'Negative':'int'
+        })
+
         self.numLines = 0
         self.isRpg = False
         self.numGratuidos = 0
@@ -11,12 +20,13 @@ class ParseSteamData:
         self.rpg = {
             'numLines': 0,
             'dlc': {'sum': 0, 'max': 0},
-            'avaliations': {'positivas': 0, 'negativas': 0},
-            'materiaisDemonstrativos': 0
+            'avaliations': {'positivas': {'sum': 0, 'max': 0}, 'negativas': {'sum': 0, 'max': 0}},
+            'materiaisDemonstrativos': {'sum': 0, 'max': 0}
         }
         self.compatibilidade = {'Windows': 0, 'Mac': 0, 'Linux': 0}
-        self.metacriticScore = {}
         self.metacriticScoreData = {}
+        self.metacriticScore = {}
+        self.metacriticScore10 = {}
 
         # Carrega o arquivo de dados
         with open(csvPath) as csvfile:
@@ -42,10 +52,10 @@ class ParseSteamData:
                 self._isRpg(row['Genres'])
 
                 # DLC
-                self._incrementaDlc(row['DLC count'])
+                self._incrementaDlc(int(row['DLC count']))
 
                 # Avaliações positivas e negativas
-                self._incrementaAvaliacoes(row['Positive'], row['Negative'])
+                self._incrementaAvaliacoes(int(row['Positive']), int(row['Negative']))
 
                 # Materiais Demonstrativos - imagens e videos
                 self._incrementaMatDemo(row['Screenshots'], row['Movies'])
@@ -132,9 +142,9 @@ class ParseSteamData:
             {}
         """
         if self.isRpg:
-            self.rpg['dlc']['sum'] += int(unit)
-            if int(unit) > self.rpg['dlc']['max'] :
-                self.rpg['dlc']['max'] = int(unit)
+            self.rpg['dlc']['sum'] += unit
+            if unit > self.rpg['dlc']['max'] :
+                self.rpg['dlc']['max'] = unit
             return self.rpg['dlc']
         return {}
 
@@ -146,8 +156,12 @@ class ParseSteamData:
             {}
         """
         if self.isRpg:
-            self.rpg['avaliations']['positivas'] += int(positivas)
-            self.rpg['avaliations']['negativas'] += int(negativas)
+            self.rpg['avaliations']['positivas']['sum'] += int(positivas)
+            if positivas > self.rpg['avaliations']['positivas']['max']:
+                self.rpg['avaliations']['positivas']['max'] = positivas
+            self.rpg['avaliations']['negativas']['sum'] += int(negativas)
+            if negativas > self.rpg['avaliations']['negativas']['max']:
+                self.rpg['avaliations']['negativas']['max'] = negativas
             return self.rpg['avaliations']
         return {}
 
@@ -159,8 +173,12 @@ class ParseSteamData:
             30
         """
         if self.isRpg:
-            self.rpg['materiaisDemonstrativos'] += len(screenshots.split(","))
-            self.rpg['materiaisDemonstrativos'] += len(movies.split(","))
+            materiaisDemonstrativos = 0
+            materiaisDemonstrativos += len(screenshots.split(","))
+            materiaisDemonstrativos += len(movies.split(","))
+            self.rpg['materiaisDemonstrativos']['sum'] += materiaisDemonstrativos
+            if materiaisDemonstrativos > self.rpg['materiaisDemonstrativos']['max'] :
+                self.rpg['materiaisDemonstrativos']['max'] = materiaisDemonstrativos
             return self.rpg['materiaisDemonstrativos']
         return {}
 
@@ -211,8 +229,47 @@ class ParseSteamData:
         for n in sorted(self.metacriticScoreData, reverse=True)[:10] :
             for i in sorted(self.metacriticScoreData[n]) :
                 self.metacriticScore[n + "_" + i] = self.metacriticScoreData[n][i]
-        return self.metacriticScore
+        i = 0
+        for n in self.metacriticScore:
+            self.metacriticScore10[n] = self.metacriticScore[n]
+            if(i >= 10) :
+                break
+            i = i +1
+        return self.metacriticScore10
 
+    def getMetacriticScore(self):
+        """
+            Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
+
+            >>> p.getMetacriticScore()
+            {}
+        """
+        if self.metacriticScore10 == {} :
+            return self._computaMetacriticScore()
+        else :
+            return self.metacriticScore10
+
+    def getRpgData(self):
+        """
+            Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
+
+            >>> p.getRpgData()
+            {}
+        """
+        return self.rpg
+
+    def getEmpresasMaisPublicam(self):
+        """
+            Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
+
+            >>> p.getEmpresasMaisPublicam()
+            {}
+        """
+        filtrada = self.df.loc[:, ["Publishers", "Price"]]
+        filtrada = filtrada[self.df["Price"] > 0.0]
+        filtrada = filtrada.value_counts()
+
+        return filtrada.head()
 
     def _getPercentagemSobreTotal(self, valor, numLines = 0):
         """
