@@ -99,6 +99,24 @@ class VisualisationSteamData:
         print("O ano com o maior número de lançamentos de jogos na plataforma Steam foi", \
             f"{ano} com {str(lancamentos)} jogos lançados.")
 
+    def showJogosLinux(self):
+        """
+            Mostra crescimento de jogos para linux 2018 -> 2022
+
+            >>> v.showJogosLinux()
+            <BLANKLINE>
+            Compatibilidade dos jogos por sistema operacional:
+            Windows: 100.0%
+            Mac: 20.0%
+            Linux: 15.0%
+        """
+        jogosLinuxPorAno = self.Steam.getJogosLinux()
+        print()
+        print("Crescimento da disponibilidade de jogos para Linux entre 2018 e 2022:")
+        print(jogosLinuxPorAno)
+        for ano in range(2018, 2023):
+            print(f"Ano: {ano} - Lançamentos: {jogosLinuxPorAno[str(ano)]}")
+
     def showPercJogosSo(self):
         """
             Mostra a porcentagem de jogos compatíveis com o SOs: Windows, Mac e Linux

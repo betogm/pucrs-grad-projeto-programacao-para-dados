@@ -24,6 +24,7 @@ class ParseSteamData:
             'materiaisDemonstrativos': {'sum': 0, 'max': 0}
         }
         self.compatibilidade = {'Windows': 0, 'Mac': 0, 'Linux': 0}
+        self.linuxPorAno = {'2018': 0, '2019': 0, '2020': 0, '2021': 0, '2022': 0}
         self.metacriticScoreData = {}
         self.metacriticScore = {}
         self.metacriticScore10 = {}
@@ -43,7 +44,7 @@ class ParseSteamData:
                 self._incrementaJogosGratuitos(row['Price'])
 
                 # Registra ano de lançamento concatenando um valor
-                self._incrementaPorAnoLancamento(row['Release date'])
+                self._incrementaPorAnoLancamento(row['Release date'], row['Linux'])
 
                 # Compatibilidade com Sistemas Operacionais
                 self._incrementaPorSistemaOperacional(row['Windows'], row['Mac'], row['Linux'])
@@ -78,7 +79,7 @@ class ParseSteamData:
 
         return self.numGratuidos
 
-    def _incrementaPorAnoLancamento(self, releaseDate):
+    def _incrementaPorAnoLancamento(self, releaseDate, linux):
         """
             Registra ano de lançamento concatenando um valor.
             Faz um parser no campo 'Release date'
@@ -104,6 +105,10 @@ class ParseSteamData:
             self.dateDic[year] = 1
         else:
             self.dateDic[year] += 1
+
+        # Computa lançamentos em Linux
+        if linux == "True" and year != 'undefined' and int(year) <= 2022 and int(year) > 2017:
+            self.linuxPorAno[year] += 1
         
         return self.dateDic
 
@@ -314,6 +319,15 @@ class ParseSteamData:
             25.0
         """
         return self._getPercentagemSobreTotal(self.compatibilidade['Mac'])
+
+    def getJogosLinux(self):
+        """
+            Retorna a porcentagem de jogos compatíveis com o SO Windows
+
+            >>> p.getJogosLinux()
+            25.0
+        """
+        return self.linuxPorAno
 
     def getPercJogosLinux(self):
         """
