@@ -25,6 +25,7 @@ while True :
         print("[3] Jogos RPG: DLCs, avaliações e materiais de demonstração")
         print("[4] Empresas que mais publicaram jogos")
         print("[5] Crescimento da disponibilidade de jogos para Linux entre 2018 e 2022")
+        print("[6] Apresenta gráfico da disponibilidade de jogos por sistema operacional")
         print("[m] para mostrar o menu novamente")
         print("[s] para sair do programa")
         mostrarMenu = False
@@ -54,6 +55,10 @@ while True :
     # Mostra crescimento de jogos para linux 2018 -> 2022
     elif opt == '5' :
         Steam.showJogosLinux()
+        continue
+    # Mostra gráfico da disponibilidade de jogos por sistema operacional
+    elif opt == '6' :
+        Steam.showPercJogosSo()
         continue
     # Mostra o menu de opções novamente
     elif opt == 'm' :

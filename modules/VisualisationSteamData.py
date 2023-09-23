@@ -1,4 +1,5 @@
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 # Classe auxiliar que invoca a classe ParseSteamData
 # e apresenta os dados parseados por esta
@@ -6,6 +7,10 @@ from datetime import datetime
 class VisualisationSteamData:
 
     def __init__(self, csvPath="data/excerto.csv"):
+        # Estilos padronizados dos gráficos
+        self.plotFontTitle = {'family':'sans-serif','color':'blue','size':16}
+        self.plotFontLabel = {'family':'sans-serif','color':'gray','size':14}
+
         print("Aguarde, carregando os dados...")
 
         self.Steam = ParseSteamData(csvPath)
@@ -133,7 +138,32 @@ class VisualisationSteamData:
         print(f"Windows: {round(self.Steam.getPercJogosWindows(), 2)}%")
         print(f"Mac: {round(self.Steam.getPercJogosMac(), 2)}%")
         print(f"Linux: {round(self.Steam.getPercJogosLinux(), 2)}%")
-    
+
+        distribuicao_por_so = {
+            'sistemas_operacionais': ['Windows', 'Mac', 'Linux'],
+            'disponibilidade': [
+                round(self.Steam.getPercJogosWindows(), 2), 
+                round(self.Steam.getPercJogosMac(), 2), 
+                round(self.Steam.getPercJogosLinux(), 2)
+            ],
+            'color': ['#0066ff', '#ff8080', '#9fff80']
+        }
+
+        bubble_chart = BubbleChart(area=distribuicao_por_so['disponibilidade'],
+                                bubble_spacing=0.1)
+
+        bubble_chart.collapse()
+
+        fig, ax = plt.subplots(subplot_kw=dict(aspect="equal"))
+        bubble_chart.plot(
+            ax, distribuicao_por_so['sistemas_operacionais'], distribuicao_por_so['disponibilidade'], distribuicao_por_so['color'])
+        ax.axis("off")
+        ax.relim()
+        ax.autoscale_view()
+        ax.set_title('Disponibilidade de jogos por sistema operacional', fontdict=self.plotFontTitle)
+
+        plt.show()
+
     def showEmpresasMaisPublicam(self):
         """
             Mostra o ano com o maior número de lançamentos de jogos
@@ -157,3 +187,4 @@ if __name__ == "__main__":
     doctest.testmod(extraglobs={'v': VisualisationSteamData("data/excerto.csv")})
 else:
     from modules.ParseSteamData import ParseSteamData
+    from modules.BubbleChart import BubbleChart
