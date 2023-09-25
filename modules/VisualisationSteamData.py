@@ -1,4 +1,5 @@
 from datetime import datetime
+import numpy as np
 import matplotlib.pyplot as plt
 
 # Classe auxiliar que invoca a classe ParseSteamData
@@ -164,6 +165,73 @@ class VisualisationSteamData:
 
         plt.show()
 
+    def showSinglePlayerIndieStretegy(self):
+        """
+            Mostra o ano com o maior número de lançamentos de jogos
+
+            >>> v.showSinglePlayerIndieStretegy()
+            <BLANKLINE>
+            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+        """
+        indie, strategy = self.Steam.getSinglePlayerIndieStretegy()
+        anos = np.arange(2010, 2020)
+
+        fig, ax = plt.subplots()
+
+        ax.bar(anos, indie, label='Indie')
+        ax.bar(anos, strategy, label='Strategy')
+
+        ax.set_ylabel('Lançamentos', fontdict=self.plotFontLabel)
+        ax.set_xlabel('Ano', fontdict=self.plotFontLabel)
+        ax.legend(title='Gêneros', ncols=2)
+        plt.title("Lançamentos de jogos Single-player Indie e Strategy", fontdict=self.plotFontTitle)
+        plt.show()
+
+    def showTagAdventureGamesEvolution(self):
+        """
+            Mostra o ano com o maior número de lançamentos de jogos
+
+            >>> v.showSinglePlayerIndieStretegy()
+            <BLANKLINE>
+            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+        """
+        pol = self.Steam.getTagAdventureByYear()
+        valores = []
+        anos = range(2001, 2023)
+        for ano in anos:
+            if ano not in pol:
+                valor = 0
+            else:
+                valor = pol[ano]
+            valores.append(valor)
+
+        fig, ax = plt.subplots()
+
+        ax.bar(anos, valores, label='Adventure')
+
+        ax.set_ylabel('Lançamentos', fontdict=self.plotFontLabel)
+        ax.set_xlabel('Ano', fontdict=self.plotFontLabel)
+        # ax.legend(title='Gêneros', ncols=2)
+        plt.title("Lançamentos de jogos de Aventura", fontdict=self.plotFontTitle)
+        plt.show()
+
+
+    def showGamesPriceLow(self):
+        """
+            Mostra o ano com o maior número de lançamentos de jogos
+
+            >>> v.showSinglePlayerIndieStretegy()
+            <BLANKLINE>
+            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+        """
+        priceLow = self.Steam.getGamesPriceLow()
+        # print(priceLow)
+        print()
+        print(f"Foram lançados {priceLow['Price']} jogos pagos com valores iguais ou menores de 5 dólares.")
+        print()
+        # empresas = self.Steam.getEmpresasMaisPublicam()
+        # print(empresas)
+
     def showEmpresasMaisPublicam(self):
         """
             Mostra o ano com o maior número de lançamentos de jogos
@@ -177,6 +245,20 @@ class VisualisationSteamData:
         print()
         empresas = self.Steam.getEmpresasMaisPublicam()
         print(empresas)
+
+    def show10HighRecommendations(self):
+        """
+            Mostra o ano com o maior número de lançamentos de jogos
+
+            >>> v.show10HighRecommendations()
+            <BLANKLINE>
+            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+        """
+        print()
+        print("Os 10 jogos mais recomendados na plataforma:")
+        print()
+        top_10_recommendations = self.Steam.get10HighRecommendations()
+        print(top_10_recommendations)
 
 # Testes
 # Executar na raiz do projeto:

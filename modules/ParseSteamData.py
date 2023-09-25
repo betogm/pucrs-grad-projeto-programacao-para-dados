@@ -7,11 +7,17 @@ class ParseSteamData:
     def __init__(self, csvPath="data/excerto.csv"):
         self.df = pd.read_csv(csvPath)
 
+        self.df["datetime"] = pd.to_datetime(self.df["Release date"], format="%b %d, %Y", errors='coerce').fillna(
+            pd.to_datetime(self.df["Release date"], format="%b %Y", errors='coerce'))
+        self.df["year"] = self.df["datetime"].dt.strftime("%Y")
+
         self.df = self.df.astype({
+            'year': 'int',
             'Price':'float',
             'Positive':'int',
             'Negative':'int'
         })
+
 
         self.numLines = 0
         self.isRpg = False
@@ -290,8 +296,53 @@ class ParseSteamData:
             numLines = self.numLines
         return (100 * valor) / numLines;
 
-    def getDlc(self):
-        pass
+    def getSinglePlayerIndieStretegy(self):
+        """
+            Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
+
+            >>> p.getEmpresasMaisPublicam()
+            {}
+        """
+        filtrada = self.df.loc[:, ["Categories", "Genres", "datetime", "year"]]
+        filtrada = filtrada[
+            (self.df["Categories"].isin(["Single-player"])) &
+            (self.df["year"] >= 2010) & 
+            (self.df["year"] <= 2020) 
+        ]
+        indie = filtrada[self.df["Genres"].isin(["Indie"])]
+        strategy = filtrada[self.df["Genres"].isin(["Strategy"])]
+        dfIndie =  indie.groupby("year")["Genres"].count().to_numpy().tolist()
+        dfStrategy =  strategy.groupby("year")["Genres"].count().to_numpy().tolist()
+        return dfIndie, dfStrategy
+
+    def getTagAdventureByYear(self):
+        """
+            Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
+
+            >>> p.getTagByYear()
+            {}
+        """
+        filtrada = self.df.loc[:, ["Tags", "year"]]
+        filtrada = filtrada[(self.df["year"] >= 2001) & (self.df["year"] <= 2022)]
+        pol = filtrada[self.df["Tags"].str.contains("Adventure", na=False)]
+        dfPol =  pol.groupby("year")["Tags"].count().to_dict()
+        return dfPol
+
+    def getGamesPriceLow(self):
+        """
+            Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
+
+            >>> p.getTagByYear()
+            {}
+        """
+        filtrada = self.df.loc[:, ["Price"]]
+        filtrada = filtrada[(self.df["Price"] >= 0.1) & (self.df["Price"] <= 5.0)]
+        return filtrada.count().to_dict()
+
+    def get10HighRecommendations(self):
+        top_10_recommendations = self.df.nlargest(10, columns=['Recommendations'], keep='all')
+        return top_10_recommendations[["Name", "Recommendations"]]
+
 
     def getPercJogosGratuitos(self):
         """
