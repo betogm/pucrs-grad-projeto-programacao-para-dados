@@ -90,10 +90,10 @@ class ParseSteamData:
             Registra ano de lançamento concatenando um valor.
             Faz um parser no campo 'Release date'
 
-            >>> p._incrementaPorAnoLancamento('Sep 13, 2022')
+            >>> p._incrementaPorAnoLancamento('Sep 13, 2022', True)
             {'2022': 9, '2012': 1, '2016': 3, '2019': 1, '2023': 2, '2021': 1, '2015': 1, '2018': 1, '2017': 2}
 
-            >>> p._incrementaPorAnoLancamento('Aug 10, 2008')
+            >>> p._incrementaPorAnoLancamento('Aug 10, 2008', False)
             {'2022': 9, '2012': 1, '2016': 3, '2019': 1, '2023': 2, '2021': 1, '2015': 1, '2018': 1, '2017': 2, '2008': 1}
         """
         if "," in releaseDate :
@@ -150,7 +150,7 @@ class ParseSteamData:
             Calcula a porcentagem de um valor em relação ao total de registros
 
             >>> p._incrementaDlc(1)
-            {}
+            {'sum': 11, 'max': 9}
         """
         if self.isRpg:
             self.rpg['dlc']['sum'] += unit
@@ -164,7 +164,7 @@ class ParseSteamData:
             Calcula a porcentagem de um valor em relação ao total de registros
 
             >>> p._incrementaAvaliacoes(1, 2)
-            {}
+            {'positivas': {'sum': 1, 'max': 1}, 'negativas': {'sum': 2, 'max': 2}}
         """
         if self.isRpg:
             self.rpg['avaliations']['positivas']['sum'] += int(positivas)
@@ -181,7 +181,7 @@ class ParseSteamData:
             Calcula a porcentagem de um valor em relação ao total de registros
 
             >>> p._incrementaMatDemo("asdf,fdsa", "qwer,rewq,zxcv")
-            30
+            {'sum': 36, 'max': 18}
         """
         if self.isRpg:
             materiaisDemonstrativos = 0
@@ -198,10 +198,10 @@ class ParseSteamData:
             Calcula a porcentagem de um valor em relação ao total de registros
 
             >>> p._incrementaMetacriticScore("Zelda", "Sep 25, 2022", "50")
-            {}
+            {'releaseDate': '2022-09-25', 'jogo': 'Zelda', 'score': '50'}
 
             >>> p._incrementaMetacriticScore("Zelda", "Sep 2022", "50")
-            {}
+            {'releaseDate': '2022-09-01', 'jogo': 'Zelda', 'score': '50'}
 
             >>> p._incrementaMetacriticScore("Zelda", "Sep", "50")
             Sep
@@ -234,7 +234,7 @@ class ParseSteamData:
             Calcula a porcentagem de um valor em relação ao total de registros
 
             >>> p._computaMetacriticScore()
-            {}
+            {'69_2017-01-31': {'releaseDate': '2017-01-31', 'jogo': 'Gladiator: Sword of Vengeance', 'score': '69'}, '0_2012-10-11': {'releaseDate': '2012-10-11', 'jogo': 'Democracy 2', 'score': '0'}, '0_2015-08-20': {'releaseDate': '2015-08-20', 'jogo': 'City Quest', 'score': '0'}, '0_2016-06-03': {'releaseDate': '2016-06-03', 'jogo': 'Slash or Die', 'score': '0'}, '0_2016-07-15': {'releaseDate': '2016-07-15', 'jogo': 'MechRunner', 'score': '0'}, '0_2016-11-03': {'releaseDate': '2016-11-03', 'jogo': 'City Car Driving', 'score': '0'}, '0_2017-04-18': {'releaseDate': '2017-04-18', 'jogo': 'Aesthetic Melody', 'score': '0'}, '0_2018-03-07': {'releaseDate': '2018-03-07', 'jogo': 'The Final Days: Blood Dawn', 'score': '0'}, '0_2019-12-17': {'releaseDate': '2019-12-17', 'jogo': 'TERMINAL VR', 'score': '0'}, '0_2021-11-04': {'releaseDate': '2021-11-04', 'jogo': 'Challenge Dream Cat', 'score': '0'}, '0_2022-02-22': {'releaseDate': '2022-02-22', 'jogo': 'Tank Mechanic Simulator VR Playtest', 'score': '0'}}
         """
         self.metacriticScore = {}
         for n in sorted(self.metacriticScoreData, reverse=True)[:10] :
@@ -253,7 +253,7 @@ class ParseSteamData:
             Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
 
             >>> p.getMetacriticScore()
-            {}
+            {'69_2017-01-31': {'releaseDate': '2017-01-31', 'jogo': 'Gladiator: Sword of Vengeance', 'score': '69'}, '0_2012-10-11': {'releaseDate': '2012-10-11', 'jogo': 'Democracy 2', 'score': '0'}, '0_2015-08-20': {'releaseDate': '2015-08-20', 'jogo': 'City Quest', 'score': '0'}, '0_2016-06-03': {'releaseDate': '2016-06-03', 'jogo': 'Slash or Die', 'score': '0'}, '0_2016-07-15': {'releaseDate': '2016-07-15', 'jogo': 'MechRunner', 'score': '0'}, '0_2016-11-03': {'releaseDate': '2016-11-03', 'jogo': 'City Car Driving', 'score': '0'}, '0_2017-04-18': {'releaseDate': '2017-04-18', 'jogo': 'Aesthetic Melody', 'score': '0'}, '0_2018-03-07': {'releaseDate': '2018-03-07', 'jogo': 'The Final Days: Blood Dawn', 'score': '0'}, '0_2019-12-17': {'releaseDate': '2019-12-17', 'jogo': 'TERMINAL VR', 'score': '0'}, '0_2021-11-04': {'releaseDate': '2021-11-04', 'jogo': 'Challenge Dream Cat', 'score': '0'}, '0_2022-02-22': {'releaseDate': '2022-02-22', 'jogo': 'Tank Mechanic Simulator VR Playtest', 'score': '0'}}
         """
         if self.metacriticScore10 == {} :
             return self._computaMetacriticScore()
@@ -265,7 +265,7 @@ class ParseSteamData:
             Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
 
             >>> p.getRpgData()
-            {}
+            {'numLines': 3, 'dlc': {'sum': 11, 'max': 9}, 'avaliations': {'positivas': {'sum': 1, 'max': 1}, 'negativas': {'sum': 2, 'max': 2}}, 'materiaisDemonstrativos': {'sum': 36, 'max': 18}}
         """
         return self.rpg
 
@@ -274,7 +274,13 @@ class ParseSteamData:
             Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
 
             >>> p.getEmpresasMaisPublicam()
-            {}
+            Publishers            Price
+            Adam DeLease          2.99     1
+            ClickGames            1.99     1
+            eTIRUe                0.79     1
+            Zankey Studio         2.99     1
+            WASABI entertainment  15.99    1
+            Name: count, dtype: int64
         """
         filtrada = self.df.loc[:, ["Publishers", "Price"]]
         filtrada = filtrada[self.df["Price"] > 0.0]
@@ -300,8 +306,8 @@ class ParseSteamData:
         """
             Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
 
-            >>> p.getEmpresasMaisPublicam()
-            {}
+            >>> p.getSinglePlayerIndieStretegy()
+            ([], [])
         """
         filtrada = self.df.loc[:, ["Categories", "Genres", "datetime", "year"]]
         filtrada = filtrada[
@@ -319,8 +325,8 @@ class ParseSteamData:
         """
             Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
 
-            >>> p.getTagByYear()
-            {}
+            >>> p.getTagAdventureByYear()
+            {2015: 1, 2016: 1, 2017: 2, 2021: 1, 2022: 2}
         """
         filtrada = self.df.loc[:, ["Tags", "year"]]
         filtrada = filtrada[(self.df["year"] >= 2001) & (self.df["year"] <= 2022)]
@@ -332,8 +338,8 @@ class ParseSteamData:
         """
             Mostra os dez jogos mais bem avaliados, de acordo com o Metacritic
 
-            >>> p.getTagByYear()
-            {}
+            >>> p.getGamesPriceLow()
+            {'Price': 9}
         """
         filtrada = self.df.loc[:, ["Price"]]
         filtrada = filtrada[(self.df["Price"] >= 0.1) & (self.df["Price"] <= 5.0)]
@@ -376,7 +382,7 @@ class ParseSteamData:
             Retorna a porcentagem de jogos compatíveis com o SO Windows
 
             >>> p.getJogosLinux()
-            25.0
+            {'2018': 0, '2019': 0, '2020': 0, '2021': 0, '2022': 0}
         """
         return self.linuxPorAno
 

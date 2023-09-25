@@ -33,11 +33,13 @@ class VisualisationSteamData:
 
     def showPercJogosGratuitosPagos(self):
         """
-            Mostra a porcentagem de jogos gratuítos
+            Mostra a porcentagem de jogos gratuítos e Pagos
         
-            >>> v.showPercJogosGratuitos()
+            >>> v.showPercJogosGratuitosPagos()
             <BLANKLINE>
-            Percentagem de jogos gratuítos disponíveis na plataforma Steam: 10.0%
+            Percentagem de jogos gratuítos e pagos disponíveis na plataforma Steam:
+            Gratuitos: 10.0%
+            Pagos: 90.0%
         """
         print()
         print("Percentagem de jogos gratuítos e pagos disponíveis na plataforma Steam:")
@@ -50,7 +52,20 @@ class VisualisationSteamData:
         
             >>> v.showMetacriticBetterAvaliated()
             <BLANKLINE>
-            Percentagem de jogos gratuítos disponíveis na plataforma Steam: 10.0%
+            Os dez jogos mais bem avaliados, de acordo com o Metacritic:
+            <BLANKLINE>
+            Score    Data Lançamento     Jogo
+            69         31/01/2017      Gladiator: Sword of Vengeance
+            0         11/10/2012      Democracy 2
+            0         20/08/2015      City Quest
+            0         03/06/2016      Slash or Die
+            0         15/07/2016      MechRunner
+            0         03/11/2016      City Car Driving
+            0         18/04/2017      Aesthetic Melody
+            0         07/03/2018      The Final Days: Blood Dawn
+            0         17/12/2019      TERMINAL VR
+            0         04/11/2021      Challenge Dream Cat
+            0         22/02/2022      Tank Mechanic Simulator VR Playtest
         """
         print()
         print("Os dez jogos mais bem avaliados, de acordo com o Metacritic:")
@@ -67,10 +82,6 @@ class VisualisationSteamData:
         """
             Jogos RPG: Mostra  número médio e máximo de: DLCs, avaliações positivas, avaliações negativas 
             e materiais de demonstração (número de capturas de tela e filmes, somados)
-        
-            >>> v.showRpgData()
-            <BLANKLINE>
-            Percentagem de jogos gratuítos disponíveis na plataforma Steam: 10.0%
         """
         rpgData = self.Steam.getRpgData()
         print()
@@ -111,28 +122,22 @@ class VisualisationSteamData:
 
             >>> v.showJogosLinux()
             <BLANKLINE>
-            Compatibilidade dos jogos por sistema operacional:
-            Windows: 100.0%
-            Mac: 20.0%
-            Linux: 15.0%
+            Crescimento da disponibilidade de jogos para Linux entre 2018 e 2022:
+            Ano: 2018 - Lançamentos: 0
+            Ano: 2019 - Lançamentos: 0
+            Ano: 2020 - Lançamentos: 0
+            Ano: 2021 - Lançamentos: 0
+            Ano: 2022 - Lançamentos: 0
         """
         jogosLinuxPorAno = self.Steam.getJogosLinux()
         print()
         print("Crescimento da disponibilidade de jogos para Linux entre 2018 e 2022:")
-        print(jogosLinuxPorAno)
         for ano in range(2018, 2023):
             print(f"Ano: {ano} - Lançamentos: {jogosLinuxPorAno[str(ano)]}")
 
     def showPercJogosSo(self):
         """
             Mostra a porcentagem de jogos compatíveis com o SOs: Windows, Mac e Linux
-
-            >>> v.showPercJogosSo()
-            <BLANKLINE>
-            Compatibilidade dos jogos por sistema operacional:
-            Windows: 100.0%
-            Mac: 20.0%
-            Linux: 15.0%
         """
         print()
         print("Compatibilidade dos jogos por sistema operacional:")
@@ -167,11 +172,7 @@ class VisualisationSteamData:
 
     def showSinglePlayerIndieStretegy(self):
         """
-            Mostra o ano com o maior número de lançamentos de jogos
-
-            >>> v.showSinglePlayerIndieStretegy()
-            <BLANKLINE>
-            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+            Mostra o Número total de jogos single-player do gênero Indie e estratégia lançados por ano entre 2010 e 2020
         """
         indie, strategy = self.Steam.getSinglePlayerIndieStretegy()
         anos = np.arange(2010, 2020)
@@ -189,11 +190,7 @@ class VisualisationSteamData:
 
     def showTagAdventureGamesEvolution(self):
         """
-            Mostra o ano com o maior número de lançamentos de jogos
-
-            >>> v.showSinglePlayerIndieStretegy()
-            <BLANKLINE>
-            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+            Mostra os Lançamentos de jogos de aventura entre 2001 e 2022
         """
         pol = self.Steam.getTagAdventureByYear()
         valores = []
@@ -218,11 +215,12 @@ class VisualisationSteamData:
 
     def showGamesPriceLow(self):
         """
-            Mostra o ano com o maior número de lançamentos de jogos
+            Mostra os Jogos com valores igual ou abaixo de $5.00
 
-            >>> v.showSinglePlayerIndieStretegy()
+            >>> v.showGamesPriceLow()
             <BLANKLINE>
-            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+            Foram lançados 9 jogos pagos com valores iguais ou menores de 5 dólares.
+            <BLANKLINE>
         """
         priceLow = self.Steam.getGamesPriceLow()
         # print(priceLow)
@@ -234,11 +232,19 @@ class VisualisationSteamData:
 
     def showEmpresasMaisPublicam(self):
         """
-            Mostra o ano com o maior número de lançamentos de jogos
+            Mostra Empresas que mais publicaram jogos
 
             >>> v.showEmpresasMaisPublicam()
             <BLANKLINE>
-            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+            As cinco empresas que mais publicam jogos pagos na plataforma:
+            <BLANKLINE>
+            Publishers            Price
+            Adam DeLease          2.99     1
+            ClickGames            1.99     1
+            eTIRUe                0.79     1
+            Zankey Studio         2.99     1
+            WASABI entertainment  15.99    1
+            Name: count, dtype: int64
         """
         print()
         print("As cinco empresas que mais publicam jogos pagos na plataforma:")
@@ -248,11 +254,33 @@ class VisualisationSteamData:
 
     def show10HighRecommendations(self):
         """
-            Mostra o ano com o maior número de lançamentos de jogos
+            Mostra os 10 jogos que receberam mais recomendações
 
             >>> v.show10HighRecommendations()
             <BLANKLINE>
-            O ano com o maior número de lançamentos de jogos na plataforma Steam foi 2022 com 8 jogos lançados.
+            Os 10 jogos mais recomendados na plataforma:
+            <BLANKLINE>
+                                                        Name  Recommendations
+            9                               City Car Driving            15683
+            18                                       Just Go              302
+            15                                  Slash or Die              141
+            0                                   Six Braves 🕌                0
+            1                                     Caterpilla                0
+            2                                   F*ckable Kim                0
+            3            Tank Mechanic Simulator VR Playtest                0
+            4                                    Democracy 2                0
+            5                                         Medusa                0
+            6                                   SmileXCorp 3                0
+            7                                     MechRunner                0
+            8                                    TERMINAL VR                0
+            10                                 Hide and Seek                0
+            11                           Challenge Dream Cat                0
+            12                                    City Quest                0
+            13                                     Birb Race                0
+            14                    The Final Days: Blood Dawn                0
+            16                 Gladiator: Sword of Vengeance                0
+            17                              Aesthetic Melody                0
+            19  Paze Knight Ellen and the Dungeon town Sodom                0
         """
         print()
         print("Os 10 jogos mais recomendados na plataforma:")

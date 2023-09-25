@@ -29,7 +29,7 @@ while True :
         print("[7] Apresenta número total de jogos single-player do gênero Indie e estratégia lançados por ano entre 2010 e 2020")
         print("[8] Apresenta o crescimento dos jogos tagueados como Aventura entre 2001 e 2022")
         print("[9] Quantos jogos foram lançados com preços iguais ou menores de $5.00?")
-        print("[10] Quais as 10 empresas que desenvolveram e lançaram mais jogos?")
+        print("[10] Mostra os 10 jogos que receberam mais recomendações")
         print("[m] para mostrar o menu novamente")
         print("[s] para sair do programa")
         mostrarMenu = False
@@ -76,7 +76,7 @@ while True :
     elif opt == '9' :
         Steam.showGamesPriceLow()
         continue
-    # Quais as 10 empresas que desenvolveram e lançaram mais jogos?
+    # Mostra os 10 jogos que receberam mais recomendações
     elif opt == '10' :
         Steam.show10HighRecommendations()
         continue
